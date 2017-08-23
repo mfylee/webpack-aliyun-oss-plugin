@@ -1,0 +1,31 @@
+{
+  "name": "webpack-aliyun-oss-plugin",
+  "version": "1.0.0",
+  "description": "上传webpack编译后的文件到阿里云OSS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mfylee/webpack-aliyun-oss-plugin.git"
+  },
+  "keywords": [
+    "webpack",
+    "aliyun",
+    "oss"
+  ],
+  "author": "mfylee@163.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mfylee/webpack-aliyun-oss-plugin/issues"
+  },
+  "homepage": "https://github.com/mfylee/webpack-aliyun-oss-plugin#readme",
+  "dependencies": {
+    "ali-oss": "^4.10.0",
+    "async": "^2.5.0",
+    "co": "^4.6.0",
+    "config-file-loader": "^1.0.0",
+    "underscore": "^1.8.3"
+  }
+}
