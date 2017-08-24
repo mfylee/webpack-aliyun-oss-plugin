@@ -19,7 +19,7 @@ var ConfigFileLoader = require('config-file-loader');
 /**
  * 读取全局配置
  * ~/.aliyun
- * ~/.aliyunrc
+ * @link https://github.com/reyesr/config-file-loader
  */
 var aliyunConfig = new ConfigFileLoader.Loader().get('aliyun');
 
@@ -29,7 +29,6 @@ var DEFAULT_OPTIONS = {
     sk: '',
     bucket: '',
     region: '',
-    prefix: '',
     filter: function (file) {
         return true;
     }
@@ -67,10 +66,12 @@ WebpackAliyunOssPlugin.prototype.apply = function (compiler) {
             co(function *() {
                 yield me.client.put(key, body);
                 console.log('[' + file + '] SUCCESS：', key);
-                done();
+                done(null, true);
             }).catch(callback);
-        }, function () {
-            console.log('[WebpackAliyunOssPlugin]', 'All Completed');
+        }, function (err, result) {
+            if (result) {
+                console.log('[WebpackAliyunOssPlugin]', 'All Completed');
+            }
             callback();
         });
     });
