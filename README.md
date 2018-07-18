@@ -19,6 +19,7 @@ module.exports = {
         // 建议只在生产环境配置代码上传
         new WebpackAliyunOssPlugin({
             bucket: 'BucketName',
+            account: 'account1',
             region: 'oss-cn-hangzhou', // bucket所在区域的接入点
             filter: function (asset) {
                 return !/\.html$/.test(asset);
@@ -39,6 +40,9 @@ module.exports = {
     bucket所在的区域，如果是在阿里云机器上，可以使用内部region，节省流量
 - filter(Function(filepath))
     文件过滤器，通过该方法可自由决定哪些文件需要上传
+- account(String)
+    多账号支持，可以在`.aliyun`配置文件中配置多个子账号
+
 
 ## accessKeyId & accessKeySecret保密
 如果将`accessKeyId`和`accessKeySecret`直接写到代码中势必造成了安全隐患，为了安全起见，可以将敏感信息保存到编译机的配置文件中
@@ -51,3 +55,10 @@ echo "ak:xxxx\nsk:xxx" > .aliyun
 chmod 600 .aliyun
 ```
 其中`ak`为accessKeyId，`sk`为accessKeySecret
+
+#### 多账号支持
+```
+cd ~
+echo "account1:\nak:xxxx\nsk:xxx\naccount2:\nak:yyy\nsk:yyyy" > .aliyun
+chmod 600 .aliyun
+```

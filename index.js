@@ -29,6 +29,8 @@ var DEFAULT_OPTIONS = {
     sk: '',
     bucket: '',
     region: '',
+    // 多账号支持
+    account: null,
     filter: function (file) {
         return true;
     }
@@ -39,10 +41,12 @@ var DEFAULT_OPTIONS = {
 function WebpackAliyunOssPlugin(options) {
     this.options = u.extend({}, DEFAULT_OPTIONS, options);
 
+    var conf = options.account ? aliyunConfig[options.account] : aliyunConfig;
+
     this.client = new OSS({
-        region: this.options.region,
-        accessKeyId: this.options.ak || aliyunConfig.ak,
-        accessKeySecret: this.options.sk || aliyunConfig.sk
+        region: this.options.region || conf.region,
+        accessKeyId: this.options.ak || conf.ak,
+        accessKeySecret: this.options.sk || conf.sk
     });
 
     this.client.useBucket(this.options.bucket);
@@ -50,7 +54,7 @@ function WebpackAliyunOssPlugin(options) {
 
 WebpackAliyunOssPlugin.prototype.apply = function (compiler) {
     var me = this;
-    compiler.plugin('emit' ,function (compilation, callback) {
+    compiler.hooks.emit.tapAsync('WebpackAliyunOssPlugin', function (compilation, callback) {
         var publicPath = url.parse(compiler.options.output.publicPath);
         if (!publicPath.protocol || !publicPath.hostname) {
             return callback(new Error('Webpack配置文件中: "output.publicPath"必须设置为域名，例如： https://domain.com/path/'));
