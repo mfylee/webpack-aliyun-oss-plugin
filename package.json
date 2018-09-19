@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/mfylee/webpack-aliyun-oss-plugin#readme",
   "dependencies": {
-    "ali-oss": "^4.10.0",
+    "ali-oss": "^6.0.0",
     "async": "^2.5.0",
     "co": "^4.6.0",
     "config-file-loader": "^1.0.0",
