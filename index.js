@@ -9,11 +9,9 @@ var fs = require('fs');
 var path = require('path');
 var url = require('url');
 
-var OSS = require('ali-oss');
-var co = require('co');
+var OSS = require('ali-oss').Wrapper;
 
 var u = require('underscore');
-var async = require('async');
 
 var ConfigFileLoader = require('config-file-loader');
 /**
@@ -29,6 +27,7 @@ var DEFAULT_OPTIONS = {
     sk: '',
     bucket: '',
     region: '',
+    retry: 3,
     // 多账号支持
     account: null,
     filter: function (file) {
@@ -62,21 +61,39 @@ WebpackAliyunOssPlugin.prototype.apply = function (compiler) {
 
         var files = u.filter(u.keys(compilation.assets), me.options.filter);
 
-        async.every(files, function (file, done) {
+        if (files.length === 0) {
+            return callback();
+        }
+
+        function upload(file, times) {
             var target = url.resolve(url.format(publicPath), file);
             var key = url.parse(target).pathname;
             var source = compilation.assets[file].source();
             var body = Buffer.isBuffer(source) ? source : new Buffer(source, 'utf8');
-            co(function *() {
-                yield me.client.put(key, body);
-                console.log('[' + file + '] SUCCESS：', key);
-                done(null, true);
-            }).catch(callback);
-        }, function (err, result) {
-            if (result) {
-                console.log('[WebpackAliyunOssPlugin]', 'All Completed');
-            }
+            return me.client.put(key, body, {
+                timeout: 30 * 1000
+            }).then(function () {
+                console.log('[WebpackAliyunOssPlugin SUCCESS]：', key);
+                var next = files.shift();
+                if (next) {
+                    return upload(next, me.options.retry);
+                }
+            }, function (e) {
+                if (times === 0) {
+                    throw new Error('[WebpackAliyunOssPlugin ERROR]: ', e);
+                }
+                else {
+                    console.log('[WebpackAliyunOssPlugin retry]：', times, key);
+                    return upload(file, --times);
+                }
+            });
+        }
+        upload(files.shift(), me.options.retry).then(function () {
+            console.log('[WebpackAliyunOssPlugin FINISHED]', 'All Completed');
             callback();
+        }).catch(function (e) {
+            console.log('[WebpackAliyunOssPlugin FAILED]', e);
+            return callback(e);
         });
     });
 };

@@ -1,6 +1,6 @@
 {
   "name": "webpack-aliyun-oss-plugin",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "上传webpack编译后的文件到阿里云OSS",
   "main": "index.js",
   "scripts": {
@@ -22,9 +22,7 @@
   },
   "homepage": "https://github.com/mfylee/webpack-aliyun-oss-plugin#readme",
   "dependencies": {
-    "ali-oss": "^4.10.0",
-    "async": "^2.5.0",
-    "co": "^4.6.0",
+    "ali-oss": "^4.15.1",
     "config-file-loader": "^1.0.0",
     "underscore": "^1.8.3"
   }
